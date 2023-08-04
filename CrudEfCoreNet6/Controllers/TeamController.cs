@@ -75,4 +75,18 @@ public class TeamController: ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete]
+    public IActionResult Delete(int id)
+    {
+        var team = _teams.FirstOrDefault(team => team.Id == id);
+        
+        if (team == null)
+            return BadRequest($"Team with ID:{id} does not exists!");
+
+        _teams.Remove(team);
+
+        return NoContent();
+    }
+
 }
