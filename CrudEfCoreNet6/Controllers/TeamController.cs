@@ -7,7 +7,7 @@ namespace CrudEfCoreNet6.Controllers;
 [Route("[controller]")]
 public class TeamController: ControllerBase
 {
-    private List<Team> teams = new List<Team>
+    private static List<Team> teams = new List<Team>
     {
         new Team()
         {
@@ -32,20 +32,31 @@ public class TeamController: ControllerBase
         }
     };
   
-    [HttpGet("{id:int}")]
-    public IActionResult Get(string id)
+    [HttpGet]
+    public IActionResult Get()
     {
         return Ok(teams);
     }
 
-    [HttpGet]
-    public IActionResult Get(int Id)
+    [HttpGet("{id:int}")]
+    public IActionResult Get(int id)
     {
-        var team = teams.FirstOrDefault(x => x.Id == Id);
+        var team = teams.FirstOrDefault(x => x.Id == id);
 
         if (team == null)
-            return BadRequest($"There is no team in this ID: {Id}");
+            return BadRequest($"There is no team in this ID: {id}");
 
         return Ok(team);
+    }
+
+    [HttpPost]
+    public IActionResult Post(Team team)
+    {
+        if (team == null)
+            return BadRequest("You cannot specify team");
+        
+        teams.Add(team);
+
+        return CreatedAtAction("Get", team.Id, team);
     }
 }
