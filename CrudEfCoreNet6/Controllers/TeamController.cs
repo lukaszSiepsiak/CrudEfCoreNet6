@@ -7,7 +7,7 @@ namespace CrudEfCoreNet6.Controllers;
 [Route("[controller]")]
 public class TeamController: ControllerBase
 {
-    private static List<Team> teams = new List<Team>
+    private static List<Team> _teams = new List<Team>
     {
         new Team()
         {
@@ -35,13 +35,13 @@ public class TeamController: ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(teams);
+        return Ok(_teams);
     }
 
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
-        var team = teams.FirstOrDefault(x => x.Id == id);
+        var team = _teams.FirstOrDefault(x => x.Id == id);
 
         if (team == null)
             return BadRequest($"There is no team in this ID: {id}");
@@ -55,8 +55,24 @@ public class TeamController: ControllerBase
         if (team == null)
             return BadRequest("You cannot specify team");
         
-        teams.Add(team);
+        _teams.Add(team);
 
         return CreatedAtAction("Get", team.Id, team);
+    }
+
+    [HttpPut]
+    public IActionResult Put(int id, string country)
+    {
+        var team = _teams.FirstOrDefault(team => team.Id == id);
+        
+        if (team == null)
+            return BadRequest($"Team with ID:{id} does not exists!");
+
+        if (String.IsNullOrWhiteSpace(country))
+            return BadRequest("You must correctly specify country property!");
+        
+        team.Country = country;
+
+        return NoContent();
     }
 }
